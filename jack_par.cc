@@ -5,6 +5,8 @@
    \date 2016
 */
 
+//TODO License
+
 #include "jackclient.h"
 #include <iostream>
 

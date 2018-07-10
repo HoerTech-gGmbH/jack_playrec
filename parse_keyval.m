@@ -1,4 +1,4 @@
-function sCfg = tascar_parse_keyval( sCfg, sHelp, varargin )
+function sCfg = parse_keyval( sCfg, sHelp, varargin )
   if (numel(varargin) == 1) && strcmp(varargin{1},'help')
     sOut = sprintf(' List of valid keys:\n');
     fields = fieldnames(sCfg);
