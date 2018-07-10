@@ -2,27 +2,27 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
 % JACK_PLAYREC - synchonouos recording/playback via jack
 %
 % Usage:
-% [y,fs,bufsize,load,xruns,sCfg] = tascar_jackio( x, ... );
+% [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, ... );
 %
 % Examples:
 % 
 % Display list of valid key/value pairs:
-% tascar_jackio help
+% jack_playrec help
 %
 % Playback of MATLAB matrix x on hardware outputs (one column per channel):
-% tascar_jackio( x );
+% jack_playrec( x );
 %
 % Playback of MATLAB data via user defined ports:
-% tascar_jackio( x, 'output', csOutputPorts );
+% jack_playrec( x, 'output', csOutputPorts );
 %
 % Synchronouos playback and recording of MATLAB vector:
-% [y,fs,bufsize] = tascar_jackio( x, 'output', csOutputPorts, 'input', csInputPorts );
+% [y,fs,bufsize] = jack_playrec( x, 'output', csOutputPorts, 'input', csInputPorts );
 %
 % Synchronouos playback and recording, with jack transport:
-% [y,fs,bufsize] = tascar_jackio( x, 'input', csInputPorts, 'starttime', transportStart );
+% [y,fs,bufsize] = jack_playrec( x, 'input', csInputPorts, 'starttime', transportStart );
 %
 % Synchronouos playback and recording, in freewheeling mode:
-% [y,fs,bufsize] = tascar_jackio( x, 'input', csInputPorts, 'freewheeling', true );
+% [y,fs,bufsize] = jack_playrec( x, 'input', csInputPorts, 'freewheeling', true );
 %
 % If csOutputPorts and csInputPorts are a single string, a single
 % port name is used. If they are a cell string array, the number of
@@ -58,14 +58,14 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
   sHelp.wait = ['instead of re-locating transport wait for start-time'];
   sCfg.freewheeling = false;
   sHelp.freewheeling = ['switch to freewheeling mode'];
-  sCfg = tascar_parse_keyval( sCfg, sHelp, varargin{:} );
+  sCfg = parse_keyval( sCfg, sHelp, varargin{:} );
   if isempty(sCfg)
     return;
   end
-  [err,msg] = system('LD_LIBRARY_PATH="" tascar_jackpar');
+  [err,msg] = system('LD_LIBRARY_PATH="" jack_par');
   [data,narg] = sscanf(msg,'%d %d');
   if narg ~= 2
-    error('tascar_jackpar failed');
+    error('jack_par failed');
   end
   y = [];
   fs = data(2);
@@ -80,7 +80,7 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
   %  transportStart = [];
   %end
   sInPar = '';
-  sCmd = 'tascar_jackio';
+  sCmd = 'jack_playrec';
   if ~isempty(sCfg.starttime)
     sCmd = [sCmd,sprintf(' -s %g',sCfg.starttime)];
   end
