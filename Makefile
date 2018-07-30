@@ -1,6 +1,6 @@
 CC=gcc
 CXX=g++
-CXXFLAGS=-std=c++14 -pthread
+CXXFLAGS=-std=c++11 -pthread
 LDFLAGS=
 LDLIBS=-ljack -lsndfile
 
