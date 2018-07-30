@@ -1,12 +1,20 @@
-/**
-   \file jackclient.h
-   \brief "jackclient" is a C++ wrapper for the JACK API.
-   \author Giso Grimm
-   \date 2011
-*/
+// "jackclient" is a C++ wrapper for the JACK API.
+// This file is part of the HörTech jack tools
+// Copyright (C) 2018  Hörtech gGmbH
+// Copyright (C) 2011  Giso Grimm
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-//TODO License
-
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef JACKCLIENT_H
 #define JACKCLIENT_H
@@ -117,4 +125,3 @@ protected:
  * compile-command: "make -C .."
  * End:
  */
-
