@@ -26,3 +26,4 @@ clean:
 distclean: clean
 	@rm -f jack_playrec
 	@rm -f jack_par
+	@rm -f *.deb
