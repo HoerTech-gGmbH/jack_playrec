@@ -1,5 +1,4 @@
 Section: contrib/sound
-Suggests: 
 Maintainer: openMHA Packaging Team <packaging@openmha.org>
 Description: HoerTech jack tools
   Additional tools for the JACK sound server
