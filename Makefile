@@ -20,6 +20,9 @@ jack_par: $(PAR_OBJ)
 
 .PHONY: clean
 
+deb: all
+	@htchdebian-mkdeb jack-tools-extra.csv 0.1
+
 clean:
 	@rm -rf *.o
 
