@@ -1,5 +1,5 @@
 // jack_par prints jack parameters (bufsize, samplerate)
-// This file is part of the HörTech jack tools
+// This file is part of jack_playrec
 // Copyright (C) 2018  Hörtech gGmbH
 // Copyright (C) 2016 Giso Grimm, Carl-von-Ossietzky Universitaet Oldenburg
 //

@@ -1,4 +1,4 @@
-// This file is part of the HörTech jack tools
+// This file is part of jack_playrec
 // Copyright (C) 2018  Hörtech gGmbH
 // Copyright (C) 2012 2014 2017 Giso Grimm
 //

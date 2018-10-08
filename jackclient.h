@@ -1,5 +1,5 @@
 // "jackclient" is a C++ wrapper for the JACK API.
-// This file is part of the HörTech jack tools
+// This file is part of jack_playrec
 // Copyright (C) 2018  Hörtech gGmbH
 // Copyright (C) 2011  Giso Grimm
 //
