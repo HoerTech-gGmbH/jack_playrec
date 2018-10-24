@@ -37,7 +37,7 @@ jack_par: $(PAR_OBJ)
 .PHONY: clean
 
 deb: all
-	@htchdebian-mkdeb jack-playrec.csv 0.1
+	@htchdebian-mkdeb jack_playrec.csv 0.1
 
 clean:
 	@rm -rf *.o

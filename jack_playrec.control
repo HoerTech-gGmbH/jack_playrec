@@ -1,0 +1,5 @@
+Section: contrib/sound
+Maintainer: openMHA Packaging Team <packaging@openmha.org>
+Description: jack_playrec provides an interface for synchronous recording/playback via the JACK Audio Connection Kit.
+	In addition to the cli a Matlab wrapper is provided.
+Homepage: http://www.github.com/HoerTech-gGmbH/jack_playrec
