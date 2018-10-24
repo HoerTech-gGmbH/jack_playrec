@@ -23,6 +23,8 @@ LDLIBS=-ljack -lsndfile
 PLAYREC_OBJ=jackclient.o jack_playrec.o jackiowav.o errorhandling.o cli.o
 PAR_OBJ=jackclient.o jack_par.o errorhandling.o
 
+GITCOMMITHASH=$(shell  git log -n 1 | head -n 1 | sed -e 's/^commit //' | head -c 8)
+
 all: jack_playrec jack_par
 
 %.o: %.cc
@@ -37,7 +39,7 @@ jack_par: $(PAR_OBJ)
 .PHONY: clean
 
 deb: all
-	@htchdebian-mkdeb jack_playrec.csv 0.1
+	@htchdebian-mkdeb jack_playrec.csv $(GITCOMMITHASH)
 
 clean:
 	@rm -rf *.o
