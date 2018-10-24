@@ -23,7 +23,8 @@ LDLIBS=-ljack -lsndfile
 PLAYREC_OBJ=jackclient.o jack_playrec.o jackiowav.o errorhandling.o cli.o
 PAR_OBJ=jackclient.o jack_par.o errorhandling.o
 
-GITCOMMITHASH=$(shell git rev-parse --short HEAD)
+CODENAME=$(shell lsb_release -sc)
+FULLVERSION=$(shell date +%Y%m%d)
 
 all: jack_playrec jack_par
 
@@ -39,7 +40,13 @@ jack_par: $(PAR_OBJ)
 .PHONY: clean
 
 deb: all
-	@htchdebian-mkdeb jack_playrec.csv $(GITCOMMITHASH)
+	rm -Rf hoertech
+	mkdir -p hoertech/$(CODENAME)
+	htchdebian-mkdeb jack_playrec.csv $(FULLVERSION)
+	mv *.deb hoertech/$(CODENAME)
+
+upload: deb
+	rsync -a hoertech jenkins@mha.physik.uni-oldenburg.de:workspace/htchdebian/repos/
 
 clean:
 	@rm -rf *.o
