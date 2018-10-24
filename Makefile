@@ -23,7 +23,7 @@ LDLIBS=-ljack -lsndfile
 PLAYREC_OBJ=jackclient.o jack_playrec.o jackiowav.o errorhandling.o cli.o
 PAR_OBJ=jackclient.o jack_par.o errorhandling.o
 
-GITCOMMITHASH=$(shell  git log -n 1 | head -n 1 | sed -e 's/^commit //' | head -c 8)
+GITCOMMITHASH=$(shell git rev-parse --short HEAD)
 
 all: jack_playrec jack_par
 
