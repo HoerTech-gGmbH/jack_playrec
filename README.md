@@ -1,6 +1,30 @@
 # JACK_PLAYREC
 jack_playrec provides an interface for synchronous recording/playback via the JACK Audio Connection Kit.
 In addition to the cli a Matlab wrapper is provided.
+
+## Installation
+### Compiling from Source (Linux)
+
+#### Prerequisites
+- g++ (tested with g++-5 and g++-8)
+- make
+- libsndfile1-dev
+- libjack-jackd2-dev
+- jackd2
+
+#### Compilation
+
+After downloading and unpacking the jack_playrec tarball, or cloning from github,
+compile openMHA with by typing in a terminal (while in the jack_playrec directory)
+```
+make
+```
+
+### Compiling from Source (other OSes)
+
+Other operating systems are not officially supported, compilation has however been
+reported to work. You may need to change the Makefile to adapt to your environment.
+
 ## Command line interface
 Usage:
 ```
