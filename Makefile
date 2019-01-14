@@ -37,7 +37,11 @@ jack_playrec: $(PLAYREC_OBJ)
 jack_par: $(PAR_OBJ) 
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-.PHONY: clean
+.PHONY: clean exe
+
+exe: all
+	./find_and_copy_dependencies.sh
+	makensis jack_playrec.nsi
 
 deb: all
 	rm -Rf hoertech
