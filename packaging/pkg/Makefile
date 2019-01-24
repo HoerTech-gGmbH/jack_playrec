@@ -24,8 +24,8 @@ PAYLOAD= \
 UTIL=jack_playrec-installer
 
 build:
-	@./find_and_copy_dependencies.sh
 	@(cd $(REPO) && make install)
+	@./find_and_copy_dependencies.sh
 
 usr-local-bin: l_usr_local_bin
 	@${CP} ./bin/* ${WORK_D}/usr/local/bin/
