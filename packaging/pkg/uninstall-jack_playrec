@@ -1,0 +1,18 @@
+#!/bin/bash
+#!/bin/bash
+set -e
+for file in $(pkgutil --only-files --files org.openmha.jack_playrec); do
+    if [[ -z "$file" ]]; then
+       echo "Error: No such file " $file;
+       exit 1;
+    fi
+    rm /$file;
+    if [[ -e "$file" ]]; then
+       echo "Error: Could not delete" $file;
+       exit 1;
+    fi
+done
+rmdir /usr/local/lib/jack_playrec/mfiles;
+rmdir /usr/local/lib/jack_playrec;
+rmdir /usr/local/doc/jack_playrec;
+pkgutil --forget org.openmha.jack_playrec;

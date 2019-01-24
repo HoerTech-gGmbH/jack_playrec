@@ -1,9 +1,14 @@
 # Compiled Object files
 *.o
 
-# Windows installer artifacts
+# Cenerated files
+config.mk
+
+# Installer artifacts
 bin/
+lib/
 mfiles/
+tmp/
 # Executables
 jack_par
 jack_playrec
@@ -11,3 +16,7 @@ jack_playrec
 # Binary packages
 *.deb
 *.exe
+*.pkg
+
+# OS-specific artifats
+.DS_Store
