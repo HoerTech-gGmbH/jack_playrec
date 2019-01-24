@@ -79,7 +79,19 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
   if isempty(sCfg)
     return;
   end
-  [err,msg] = system('LD_LIBRARY_PATH="" jack_par');
+
+  if isunix:
+    [err,msg] = system('LD_LIBRARY_PATH="" jack_par');
+  end
+
+  if ismac:
+    [err,msg] = system('jack_par');
+  end
+
+  if ispc:
+    [err,msg] = system('jack_par');
+  end
+
   [data,narg] = sscanf(msg,'%d %d');
   if narg ~= 2
     error('jack_par failed');
@@ -133,10 +145,21 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
     end
   end
   sCmd = [sCmd,' ',sInPar];
-  %disp(sCmd)
-  [a,b] = system(['LD_LIBRARY_PATH="" ',sCmd]);
-  if ~isempty(b)
-    error(b);
+
+  if isunix:
+    [err,msg] = system(['LD_LIBRARY_PATH="" ',sCmd]);
+  end
+
+  if ismac:
+    [err,msg] = system(['',sCmd]);
+  end
+
+  if ispc:
+    [err,msg] = system(['',sCmd]);
+  end
+
+  if ~isempty(err)
+    error(err);
   end
   if ~isempty(sInPar)
     y = audioread(sNameIn);
