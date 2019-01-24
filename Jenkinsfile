@@ -26,6 +26,9 @@ def jack_playrec_build_steps(stage_name) {
   // Avoid that artifacts from previous builds influence this build
   sh "git reset --hard && git clean -ffdx"
 
+  // Autodetect libs/compiler
+  sh "./configure"
+
   // On linux, we also create debian packages
   def linux = (system != "windows" && system != "mac")
   def windows = (system == "windows")
@@ -33,7 +36,7 @@ def jack_playrec_build_steps(stage_name) {
   def pkgs = mac ? " pkg" : ""
   def debs = linux ? " deb" : ""
   def exes = windows ? " exe" : ""
-  sh ("make -j $cpus all" + debs + exes + pkgs)
+  sh ("make -j all" + debs + exes + pkgs)
 
   if (linux) {
     // Store debian packets for later retrieval by the repository manager
@@ -89,7 +92,7 @@ pipeline {
         stage("publish") {
             agent {label "aptly"}
             // do not publish packages for any branches except these
-            when { anyOf { branch 'master'; branch 'development'; branch'feature/automatic-build-jobs'} }
+            when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: "$BRANCH_NAME"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "$GIT_URL-aptly"]]])
 
