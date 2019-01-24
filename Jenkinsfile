@@ -36,7 +36,7 @@ def jack_playrec_build_steps(stage_name) {
   def pkgs = mac ? " pkg" : ""
   def debs = linux ? " deb" : ""
   def exes = windows ? " exe" : ""
-  sh ("make -j all" + debs + exes + pkgs)
+  sh ("make all" + debs + exes + pkgs)
 
   if (linux) {
     // Store debian packets for later retrieval by the repository manager
