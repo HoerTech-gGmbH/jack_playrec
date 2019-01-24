@@ -89,7 +89,7 @@ pipeline {
         stage("publish") {
             agent {label "aptly"}
             // do not publish packages for any branches except these
-            when { anyOf { branch 'master'; branch 'development' } }
+            when { anyOf { branch 'master'; branch 'development'; branch'feature/automatic-build-jobs'} }
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: "$BRANCH_NAME"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "$GIT_URL-aptly"]]])
 
