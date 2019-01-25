@@ -1,0 +1,4 @@
+"jack_par","usr/bin/"
+"jack_playrec","usr/bin/"
+"*.m","usr/lib/jack_playrec/"
+README.md,usr/share/doc/jack_playrec/

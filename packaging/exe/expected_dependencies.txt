@@ -1,0 +1,9 @@
+libFLAC
+libgcc_s_seh
+libogg
+libsndfile
+libspeex
+libstdc++
+libvorbis
+libvorbisenc
+libwinpthread

@@ -14,17 +14,14 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-CC=gcc
-CXX=g++
-CXXFLAGS=-std=c++11 -pthread
-LDFLAGS=
-LDLIBS=-ljack -lsndfile
+include config.mk
+
+CXXFLAGS+=-pthread
+LDFLAGS+=
+LDLIBS+=-ljack -lsndfile
 
 PLAYREC_OBJ=jackclient.o jack_playrec.o jackiowav.o errorhandling.o cli.o
 PAR_OBJ=jackclient.o jack_par.o errorhandling.o
-
-CODENAME=$(shell lsb_release -sc)
-FULLVERSION=$(shell date +%Y%m%d)
 
 all: jack_playrec jack_par
 
@@ -34,23 +31,28 @@ all: jack_playrec jack_par
 jack_playrec: $(PLAYREC_OBJ)
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-jack_par: $(PAR_OBJ) 
+jack_par: $(PAR_OBJ)
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 .PHONY: clean exe
 
-exe: all
-	./find_and_copy_dependencies.sh
-	makensis jack_playrec.nsi
+exe: install
+	$(MAKE) -C packaging/exe
 
-deb: all
-	rm -Rf hoertech
-	mkdir -p hoertech/$(CODENAME)
-	htchdebian-mkdeb jack_playrec.csv $(FULLVERSION)
-	mv *.deb hoertech/$(CODENAME)
+deb: install
+	$(MAKE) -C packaging/deb
 
-upload: deb
-	rsync -a hoertech jenkins@mha.physik.uni-oldenburg.de:workspace/htchdebian/repos/
+pkg: install
+	$(MAKE) -C packaging/pkg
+
+install: all
+	@mkdir -p  $(DESTDIR)$(PREFIX)/bin
+	@install -m 755 jack_playrec $(DESTDIR)$(PREFIX)/bin/.
+	@install -m 755 jack_par $(DESTDIR)$(PREFIX)/bin/.
+
+uninstall:
+	@rm -f $(DESTDIR)$(PREFIX)/bin/jack_playrec
+	@rm -f $(DESTDIR)$(PREFIX)/bin/jack_par
 
 clean:
 	@rm -rf *.o
@@ -58,4 +60,3 @@ clean:
 distclean: clean
 	@rm -f jack_playrec
 	@rm -f jack_par
-	@rm -f *.deb
