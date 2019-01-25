@@ -80,18 +80,12 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
     return;
   end
 
-  if isunix:
+  if any([ispc ismac]) % Windows or macOS
+    [err,msg] = system('jack_par');
+  else % Linux
     [err,msg] = system('LD_LIBRARY_PATH="" jack_par');
   end
-
-  if ismac:
-    [err,msg] = system('jack_par');
-  end
-
-  if ispc:
-    [err,msg] = system('jack_par');
-  end
-
+  
   [data,narg] = sscanf(msg,'%d %d');
   if narg ~= 2
     error('jack_par failed');
@@ -146,16 +140,10 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
   end
   sCmd = [sCmd,' ',sInPar];
 
-  if isunix:
-    [err,msg] = system(['LD_LIBRARY_PATH="" ',sCmd]);
-  end
-
-  if ismac:
-    [err,msg] = system(['',sCmd]);
-  end
-
-  if ispc:
-    [err,msg] = system(['',sCmd]);
+  if any([ispc ismac]) % Windows or macOS
+    [~,err] = system(sCmd);
+  else % Linux
+    [~,err] = system(['LD_LIBRARY_PATH="" ',sCmd]);
   end
 
   if ~isempty(err)
