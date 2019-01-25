@@ -11,7 +11,7 @@
 #define JACK_PLAYREC_VERSION_MINOR 0
 
 /** Release number of JACK_PLAYREC */
-#define JACK_PLAYREC_VERSION_RELEASE 0
+#define JACK_PLAYREC_VERSION_RELEASE 2
 
 /** Build number of JACK_PLAYREC (currently unused) */
 #define JACK_PLAYREC_VERSION_BUILD 0

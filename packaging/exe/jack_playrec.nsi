@@ -1,5 +1,5 @@
 !define PRODUCT_NAME jack-playrec 
-!define PRODUCT_VERSION 1.0.0
+!define PRODUCT_VERSION 1.0.2
 !define PRODUCT_PUBLISHER HoerTech
 BrandingText "${PRODUCT_NAME} (c) ${PRODUCT_PUBLISHER}"
 RequestExecutionLevel admin

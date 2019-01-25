@@ -7,7 +7,7 @@ include luggage.make
 REPO=../../
 
 #Include meta-information in the package
-PACKAGE_VERSION=1.0.0
+PACKAGE_VERSION=1.0.2
 TITLE=jack_playrec
 REVERSE_DOMAIN=org.openmha
 
