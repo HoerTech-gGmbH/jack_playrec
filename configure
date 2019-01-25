@@ -1,0 +1,140 @@
+#!/bin/bash
+# This file is part of jack_playrec
+# Copyright (C) 2018, 2019  Hörtech gGmbH
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+chkhdr(){
+    echo "#include <$1> "| g++ -x c++ - -c -o /dev/null 2>/dev/null 1>/dev/null && true || false;
+}
+chklib(){
+    echo "int main(){return 0;}"| g++ -x c++ - -l$1 -o /dev/null 2>/dev/null 1>/dev/null && true || false;
+}
+(
+    PREFIX="./"
+    for arg in "$@"; do
+        case "$arg" in
+            --prefix=*)
+                PREFIX=`echo $arg | sed 's/--prefix=//'`
+                ;;
+            --debug)
+                DEBUG="-g"
+                ;;
+            --debug=*)
+                DEBUG=`echo $arg | sed 's/--debug=/-g/'`
+                ;;
+            --cxxstandard=*)
+                CXXSTANDARD=`echo $arg | sed 's/--cxxstandard=//'`
+                ;;
+            --help)
+                echo 'usage: ./configure [options]'
+                echo 'options:'
+                echo '  --prefix=<path>: installation prefix'
+                echo '  --debug : include debug symbols'
+                echo '  --cxxstandard=[c++11|c++14|c++17]: override auto detection of c++ standard'
+                echo 'all invalid options are silently ignored'
+                exit 0
+                ;;
+        esac
+    done
+
+    if [ "x$ARCH" = "x" ]; then
+        ARCH=`uname -m`
+    fi
+
+    case $ARCH in
+        armhf)
+            echo "COMPILERPREFIX=arm-linux-gnueabihf-"
+            ;;
+        arm*)
+            ;;
+    esac
+
+    case `uname -s` in
+        *Linux*)
+            PLATFORM=linux
+            echo PLATFORM=linux
+            echo DYNAMIC_LIB_EXT=".so"
+            GCC_VER=`gcc -dumpversion | head -1|sed -e 's/.*[[:blank:]]//' -e 's/\([2-4]\)\.\([0-9]*\)\.\([0-9]*\)/-\1.\2/' -e 's/\([5-9]\)\.\([0-9]*\)\.\([0-9]*\)/-\1/' -e 's/^[0-9]/-&/1'`
+            echo GCC_VER=${GCC_VER}
+            echo BUILD_DIR=${ARCH}-${PLATFORM}-gcc${GCC_VER}
+            ;;
+        *Cygwin* | *Msys* | *MinGW* | *MINGW* )
+            PLATFORM=MinGW
+            echo PLATFORM=MinGW
+            echo DYNAMIC_LIB_EXT=".dll"
+            GCC_VER=`gcc -dumpversion | head -1|sed -e 's/.*[[:blank:]]//' -e 's/\([2-4]\)\.\([0-9]*\)\.\([0-9]*\)/-\1.\2/' -e 's/\([5-9]\)\.\([0-9]*\)\.\([0-9]*\)/-\1/' -e 's/^[0-9]/-&/1'`
+            echo GCC_VER=${GCC_VER}
+            echo BUILD_DIR=${ARCH}-${PLATFORM}-gcc${GCC_VER}
+            ;;
+        Darwin)
+            PLATFORM=Darwin
+            echo PLATFORM=Darwin
+            echo DYNAMIC_LIB_EXT=".dylib"
+            echo BUILD_DIR=${ARCH}-${PLATFORM}-clang
+            echo 'CXXFLAGS+=-Wno-error=unused-command-line-argument'
+            echo TOOLSET=clang
+            echo WITH_JACK=yes
+            echo LDLIBS+='-L/opt/local/lib'
+            MACCXXFLAGS+='-I/opt/local/include'
+    esac
+    echo ARCH=$ARCH
+    echo PREFIX=$PREFIX
+
+    if [ "x$CXXSTANDARD" = "x" ]; then
+        case "$GCC_VER"x in
+            -4*)
+                CXXSTANDARD=c++11
+                ;;
+            -7*|-8*|-9*)
+                CXXSTANDARD=c++17
+                ;;
+            *)
+                CXXSTANDARD=c++14
+                ;;
+        esac
+    fi
+    echo "CXXSTANDARD=$CXXSTANDARD";
+
+
+    case "$GCC_VER"x in
+        -4*)
+            ;;
+        -7*|-8*|-9*)
+            echo "CXXFLAGS+=-Wmisleading-indentation  -Wlogical-op -Wduplicated-cond -Wduplicated-branches";
+            echo "CFLAGS+=-Wmisleading-indentation  -Wlogical-op -Wduplicated-cond -Wduplicated-branches";
+            ;;
+        *)
+            ;;
+    esac
+
+    case $ARCH in
+        armhf)
+            echo "COMPILERPREFIX=arm-linux-gnueabihf-"
+            ;;
+        arm*)
+            ;;
+        x86_64*|i686*)
+            echo "SSE+=-msse -msse2 -mfpmath=sse"
+            ;;
+    esac
+    echo 'OPTIM=-O3 $(SSE) -ffast-math -fomit-frame-pointer -fno-finite-math-only'
+    echo 'CXXFLAGS+=-Wall -Wnon-virtual-dtor -Werror -std=$(CXXSTANDARD) -fPIC $(OPTIM)' ${MACCXXFLAGS} $DEBUG
+    echo 'CFLAGS+=-Wall -Werror -std=gnu11 -fPIC $(OPTIM)' ${MACCXXFLAGS} $DEBUG
+) | tee config.mk
+
+# Local Variables:
+# coding: utf-8-unix
+# indent-tabs-mode: nil
+# End:
