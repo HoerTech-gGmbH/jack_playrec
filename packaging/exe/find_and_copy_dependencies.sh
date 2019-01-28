@@ -1,8 +1,10 @@
 #!/bin/bash -ex
 # Copy all binaries into the destination folder
+cp ../../README.md .
+cp ../../LICENSE .
 mkdir -p bin
-cp jack_playrec bin/.
-cp jack_par bin/.
+cp ../../jack_playrec.exe bin/.
+cp ../../jack_par.exe bin/.
 # Walk the dependency tree, exclude all files that are already present in ./bin and files in windows/system
 cd ./bin
 for file in $(ls ./); do
@@ -27,6 +29,6 @@ done
 rm tmp*
 # Matlab toolbox files
 mkdir -p mfiles
-cp -r *.m mfiles/.
+cp -r ../../*.m mfiles/.
 find ./mfiles -name ".*" -exec rm {} \;
 
