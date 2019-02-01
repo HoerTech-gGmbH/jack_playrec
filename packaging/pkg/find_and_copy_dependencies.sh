@@ -7,24 +7,49 @@ function fix_install_names {
     if [[ $1 == "lib" ]]; then
         INSTALL_NAME=$(echo @rpath/../lib/`basename $file` | sed -E 's/\.[0-9]+//g');
         install_name_tool -id $INSTALL_NAME ./lib/`basename $file`;
-        DYLIBS=$(otool -L ./$path/`basename $file` | grep -v "/usr/lib"| grep -v "/System" | grep -v ":" | awk -F' ' '{ print $1 }' | sed '1d')
+        name=`basename $file`
     else
-        DYLIBS=$(otool -L ./$path/`basename $file` | grep -v "/usr/lib"| grep -v "/System" | grep -v ":" | awk -F' ' '{ print $1 }')
+        DYLIBS=$(otool -L ./$path/`basename $file` | grep -v "/usr/lib"| grep -v "/System" | sed "/$name/d" | Awk -F' ' '{ print $1 }')
     fi
     for dylib in $DYLIBS; do
         LIB_NAME=$(echo @rpath/../lib/`basename $dylib`| sed -E 's/\.[0-9]+//g');
         install_name_tool -change $dylib $LIB_NAME ./$path/`basename $file`;
     done;
 }
+function find_lib {
+    file=$1;
+    name=`basename $file`
+    DYLIBS=$(otool -L $file | grep -v "/usr/lib"| grep -v "/System" | sed "/$name/d" | awk -F' ' '{ print $1 }' | xargs -n1)
+    for dylib in $DYLIBS; do
+        dest=lib/$(echo `basename $dylib` | sed -E 's/\.[0-9]+//g');
+        if [ ! -f $dest ]; then
+            cp $dylib lib/$(echo `basename $dylib` | sed -E 's/\.[0-9]+//g');
+        fi;
+    done;
+}
+
 mkdir -p bin
 mkdir -p lib
 cp ../../bin/* bin/.
-for file in $(cat expected_dependencies.txt); do
-    cp $file lib/.;
+for file in bin/*; do
+    find_lib $file;
+done;
+
+while [ "$LIBS" != "$(ls lib/)" ]; do
+    LIBS=$(ls lib/)
+    for file in lib/*; do
+        find_lib $file;
+    done;
 done;
 for file in lib/*dylib; do
     fix_install_names lib $file;
 done;
 for file in bin/*; do
     fix_install_names bin $file;
+done;
+for file in $(cat expected_dependencies.txt); do
+    if [ ! -f lib/$file ]; then
+       echo "Error: Expected dependency" $file "not found in lib/. ";
+       exit 1;
+    fi
 done;
