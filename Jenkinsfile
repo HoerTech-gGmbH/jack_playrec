@@ -103,6 +103,7 @@ pipeline {
                 unstash "armv7_bionic"
                 unstash "armv7_xenial"
 
+                archiveArtifacts 'packaging/deb/hoertech/*/*deb'
                 // Copies the new debs to the stash of existing debs,
                 // creates an apt repository, uploads.
                 //sh "make"
@@ -115,7 +116,7 @@ pipeline {
 
                 // For now, make the macOS installer available in a tar file that we publish
                 // as a Jenkins artifact
-                unstash "x86_64-mac"
+                unstash "x86_64_mac"
                 archiveArtifacts 'packaging/pkg/*pkg'
 
             }
