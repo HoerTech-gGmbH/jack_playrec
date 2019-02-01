@@ -91,12 +91,12 @@ pipeline {
         }
         stage("publish") {
             agent {label "aptly"}
-            // do not publish packages for any branches except these
-            when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "ssh://mha.physik.uni-oldenburg.de/openMHA-aptly"]]])
+            // // do not publish packages for any branches except these
+            // when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
+            // steps {
+            //     checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "ssh://mha.physik.uni-oldenburg.de/openMHA-aptly"]]])
 
-                // receive all deb packages from jack_playrec build
+                // Receive all deb packages from jack_playrec build
                 unstash "x86_64_bionic"
                 unstash "x86_64_xenial"
                 unstash "x86_64_trusty"
@@ -105,13 +105,19 @@ pipeline {
 
                 // Copies the new debs to the stash of existing debs,
                 // creates an apt repository, uploads.
-                sh "make"
+                //sh "make"
 
                 // For now, make the windows installer available in a tar file that we publish
                 // as a Jenkins artifact
                 unstash "x86_64_windows"
-                sh "tar cvzf windows-installer.tar.gz mha/tools/packaging/exe/*exe"
-                archiveArtifacts 'windows-installer.tar.gz'
+                //sh "tar cvzf windows-installer.tar.gz mha/tools/packaging/exe/*exe"
+                archiveArtifacts 'mha/tools/packaging/exe/*exe'
+
+                // For now, make the macOS installer available in a tar file that we publish
+                // as a Jenkins artifact
+                unstash "x86_64-mac"
+                archiveArtifacts 'mha/tools/packaging/pkg/*pkg'
+
             }
         }
     }
