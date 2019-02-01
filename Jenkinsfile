@@ -94,7 +94,7 @@ pipeline {
             // do not publish packages for any branches except these
             when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: "$BRANCH_NAME"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "$GIT_URL-aptly"]]])
+                checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "ssh://mha.physik.uni-oldenburg.de/openMHA-aptly"]]])
 
                 // receive all deb packages from jack_playrec build
                 unstash "x86_64_bionic"
