@@ -93,7 +93,7 @@ pipeline {
             agent {label "aptly"}
             // // do not publish packages for any branches except these
             // when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
-            // steps {
+            steps {
             //     checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "ssh://mha.physik.uni-oldenburg.de/openMHA-aptly"]]])
 
                 // Receive all deb packages from jack_playrec build
