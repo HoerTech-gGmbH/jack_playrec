@@ -111,12 +111,12 @@ pipeline {
                 // as a Jenkins artifact
                 unstash "x86_64_windows"
                 //sh "tar cvzf windows-installer.tar.gz mha/tools/packaging/exe/*exe"
-                archiveArtifacts 'mha/tools/packaging/exe/*exe'
+                archiveArtifacts 'packaging/exe/*exe'
 
                 // For now, make the macOS installer available in a tar file that we publish
                 // as a Jenkins artifact
                 unstash "x86_64-mac"
-                archiveArtifacts 'mha/tools/packaging/pkg/*pkg'
+                archiveArtifacts 'packaging/pkg/*pkg'
 
             }
         }
