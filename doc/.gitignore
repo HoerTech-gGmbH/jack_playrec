@@ -1,0 +1,8 @@
+# ignore products
+*.pdf
+
+# ignore pdflatex artifacts
+*.idx
+*.aux
+*.log
+*.out

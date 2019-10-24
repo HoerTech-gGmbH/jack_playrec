@@ -1,0 +1,219 @@
+%%% This file is part of the Open HörTech Master Hearing Aid (openMHA)
+%%% Copyright © 2019 HörTech gGmbH
+%%%
+%%% openMHA is free software: you can redistribute it and/or modify
+%%% it under the terms of the GNU Affero General Public License as published by
+%%% the Free Software Foundation, version 3 of the License.
+%%%
+%%% openMHA is distributed in the hope that it will be useful,
+%%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%% GNU Affero General Public License, version 3 for more details.
+%%%
+%%% You should have received a copy of the GNU Affero General Public License, 
+%%% version 3 along with openMHA.  If not, see <http://www.gnu.org/licenses/>.
+
+% Latex header for doxygen 1.8.11
+% adapted for openMHA
+\documentclass[11pt,a4paper,twoside]{article}
+
+% Packages required by doxygen
+\usepackage{fixltx2e}
+\usepackage{calc}
+\usepackage{openMHAdoxygen}
+\setlength{\headheight}{13.6pt}
+\usepackage[export]{adjustbox} % also loads graphicx
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{makeidx}
+\usepackage{multicol}
+\usepackage{multirow}
+\PassOptionsToPackage{warn}{textcomp}
+\usepackage{textcomp}
+\usepackage[nointegrals]{wasysym}
+\usepackage[table]{xcolor}
+
+% Font selection
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{amssymb}
+\usepackage{sectsty}
+\usepackage{textcomp}
+\renewcommand{\familydefault}{\sfdefault}
+\allsectionsfont{%
+  \fontseries{bc}\selectfont%
+  \color{darkgray}%
+}
+\renewcommand{\DoxyLabelFont}{%
+  \fontseries{bc}\selectfont%
+  \color{darkgray}%
+}
+\newcommand{\+}{\discretionary{\mbox{\scriptsize$\hookleftarrow$}}{}{}}
+
+% Headers & footers
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\renewcommand{\sectionmark}[1]{%
+  \markright{\thesection\ #1}%
+}
+\fancyhead[LE]{\fancyplain{}{\bfseries\thepage}}
+\fancyhead[CE]{\fancyplain{}{}}
+\fancyhead[RE]{\fancyplain{}{\bfseries\leftmark}}
+\fancyhead[LO]{\fancyplain{}{\bfseries\rightmark}}
+\fancyhead[CO]{\fancyplain{}{}}
+\fancyhead[RO]{\fancyplain{}{\bfseries\thepage}}
+\fancyfoot[LE]{\fancyplain{}{}}
+\fancyfoot[CE]{\fancyplain{}{}}
+\fancyfoot[RE]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019 H\"orTech gGmbH, Oldenburg }}
+\fancyfoot[LO]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019 H\"orTech gGmbH, Oldenburg }}
+\fancyfoot[CO]{\fancyplain{}{}}
+\fancyfoot[RO]{\fancyplain{}{}}
+
+
+
+
+
+
+
+
+
+
+
+
+% Indices & bibliography
+\usepackage{natbib}
+\usepackage{tocloft}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{4}
+\addtolength{\cftsubsecnumwidth}{5pt}
+\usepackage{fancyvrb}
+
+
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\footnotesize,
+ %
+ frame=lines,  % top and bottom rule only
+ framesep=2em, % separation between frame and text
+ rulecolor=\color{Gray},
+ %
+ label=\fbox{\color{Black}data.txt},
+ labelposition=topline,
+ %
+ commandchars=\|\(\), % escape character and argument delimiters for
+                      % commands within the verbatim
+ commentchar=*        % comment character
+}
+
+
+
+
+
+
+
+
+
+
+
+
+\makeindex
+
+% Custom commands
+\newcommand{\clearemptydoublepage}{%
+  \newpage{\pagestyle{empty}\cleardoublepage}%
+}
+
+\usepackage{caption}
+\captionsetup{labelsep=space,justification=centering,font={bf},singlelinecheck=off,skip=4pt,position=top}
+
+\setlength\parindent{0pt}
+\usepackage{hyperref}
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{subcaption}
+\usepackage{fancyvrb} %Für Rahmen um Code Boxen
+\usepackage{listings}
+
+
+\lstdefinestyle{customc}{
+language = tcl,
+commentstyle=\color{orange},
+  %columns = flexible
+  basicstyle = \ttfamily,
+  showstringspaces = false,
+  numbers=left,
+  numberstyle=\tiny,
+  frame = single
+}
+
+\lstset{escapechar=@,style=customc}
+
+
+
+
+
+
+
+
+\begin{document}
+\pagenumbering{arabic}
+
+\textcolor{orange}{\textbf{Installation Instructions:}} \\ \\
+\small{\url{https://github.com/HoerTech-gGmbH/jack\_playrec/blob/master/INSTALLATION.md}}
+
+
+
+\section{Minimal Example - Usage of Matlab Function "jack\_playrec" to Communicate with JACK Server}
+
+\textcolor{orange}{\textbf{The purpose of this minimal example is to demonstrate how jack\_playrec can be used to send audio data (created using simple Matlab functions) to a JACK client using a JACK server. In this example a simple sinusoidal signal is generated and send to "system:playback\_1".}} 
+
+\subsection{Preparations}
+\begin{enumerate}
+\item Start a JACK server (sample rate = 44100, Frames/Period = 256)
+    \item \textbf{Start Matlab} 
+    \item Add the path of the corresponding Matlab functions by: \\
+
+\textcolor{orange}{\textbf{Windows}} 
+\begin{verbatim}
+addpath('C:\Program Files\jack_playrec\mfiles')
+\end{verbatim}   
+\textcolor{orange}{\textbf{Linux}} 
+\begin{verbatim}
+addpath('/usr/lib/jack_playrec/')
+\end{verbatim} 
+\textcolor{orange}{\textbf{MacOS}} 
+\begin{verbatim}
+addpath('/usr/local/lib/jack_playrec/')
+\end{verbatim} 
+    
+\subsection{Example Code}
+You can now copy the following lines of code into the Matlab/Octave command windows. This simple code below shows a minimal example of how to send an audio signal to a JACK client (here system:playback\_1). 
+
+\begin{verbatim}
+sampling_rate = 44100; %needs to fit sample rate of JACK server
+frequency = 440; %frequency in Hertz
+signal_duration = 5; %signal duration in seconds
+%define time array 
+t= 0:(1/sampling_rate):(signal_duration-1/sampling_rate);
+%define sine function
+sine = transpose(sin(2*pi*frequency*t));
+%play generated signal using
+%jack_playrec(input signal,'output',name of output channel)
+jack_playrec(sine,'output',{'system:playback_1'});
+\end{verbatim}  
+
+\end{enumerate}
+
+
+
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "openMHA_application_manual"
+%%% indent-tabs-mode: nil
+%%% coding: utf-8-unix
+%%% End:

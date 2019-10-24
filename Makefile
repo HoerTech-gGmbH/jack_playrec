@@ -1,5 +1,5 @@
 # This file is part of jack_playrec
-# Copyright (C) 2018  Hörtech gGmbH
+# Copyright (C) 2018 2019 Hörtech gGmbH
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ jack_playrec: $(PLAYREC_OBJ)
 jack_par: $(PAR_OBJ)
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-.PHONY: clean exe
+.PHONY: clean exe doc
 
 exe: install
 	$(MAKE) -C packaging/exe
@@ -56,7 +56,11 @@ uninstall:
 
 clean:
 	@rm -rf *.o
+	$(MAKE) -C doc clean
 
 distclean: clean
 	@rm -f jack_playrec
 	@rm -f jack_par
+
+doc:
+	$(MAKE) -C doc/
