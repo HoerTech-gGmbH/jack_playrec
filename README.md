@@ -51,3 +51,10 @@ jack_playrec help
  csOutputPorts, and the number of channels in y will match the
  number of channels in csInputPorts. If the argument is a numeric
  vector, then the physical ports (starting from 1) are used.
+
+
+
+jack_playrec was isolated and renamed from the tascar_jackio tool of
+the Toolbox for Acoustic Scene Creation and Rendering TASCAR
+([https://github.com/HoerTech-gGmbH/tascar](https://github.com/HoerTech-gGmbH/tascar)),
+written by Giso Grimm.
