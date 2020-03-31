@@ -92,7 +92,7 @@ pipeline {
                 }
                 stage(                        "xenial && x86_64 && mhadev") {
                     agent {label              "xenial && x86_64 && mhadev"}
-                    steps {jack_playrec_steps("xenial && x86_64" && mhadev)}
+                    steps {jack_playrec_steps("xenial && x86_64 && mhadev")}
                 }
                 stage(                        "focal && x86_64 && mhadev") {
                     agent {label              "focal && x86_64 && mhadev"}
