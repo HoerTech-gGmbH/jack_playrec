@@ -1,5 +1,5 @@
 // This file is part of jack_playrec
-// Copyright (C) 2019 HörTech gGmbH
+// Copyright (C) 2019 2020 HörTech gGmbH
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -9,34 +9,57 @@
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
+//  GNU General Public License for more details.
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// On the 2019 windows build server, we cannot use the sh step anymore.
+// This workaround invokes the msys2 bash, sets the required environment
+// variables, and executes the desired command.
+def windows_bash(command) {
+  bat ('C:\\msys64\\usr\\bin\\bash -c "source /jenkins.environment && set -ex && ' + command + ' "')
+  // This will probably fail if command contains multiple lines, quotes, or
+  // similar.  Currently all our shell commands are simple enough for this
+  // simple solution to work.  Should this no longer be sufficient, then we
+  // could write the shell command to a temporary file and execute this file
+  // after sourcing the enviroment.
+}
+
+// Encapsulation of the build steps to perform when building jack_playrec
+// @param stage_name the stage name is "system && arch" where system is bionic,
+//                   xenial, windows, or mac, and arch is x86_64, i686,
+//                   or armv7. Both are separated by an && operator and spaces.
+//                   This string is also used as a valid label expression for
+//                   jenkins. The appropriate nodes have the respective labels.
 def jack_playrec_build_steps(stage_name) {
   // Extract components from stage_name:
   def system, arch
   (system,arch) = stage_name.split(/ *&& */) // regexp for missing/extra spaces
+
+  // platform booleans
+  def linux = (system != "windows" && system != "mac")
+  def windows = (system == "windows")
+  def mac = (system == "mac")
+
+  // workaround to invoke unix shell on all systems
+  def bash = { command -> windows ? windows_bash(command) : sh(command) }
 
   // checkout jack_playrec from version control system, the exact same revision that
   // triggered this job on each build slave
   checkout scm
 
   // Avoid that artifacts from previous builds influence this build
-  sh "git reset --hard && git clean -ffdx"
+  bash "git reset --hard && git clean -ffdx"
 
   // Autodetect libs/compiler
-  sh "./configure"
+  bash "./configure"
 
-  // On linux, we also create debian packages
-  def linux = (system != "windows" && system != "mac")
-  def windows = (system == "windows")
-  def mac = (system == "mac")
+  // platform specific installer creation targets
   def pkgs = mac ? " pkg" : ""
   def debs = linux ? " deb" : ""
   def exes = windows ? " exe" : ""
-  sh ("make all" + debs + exes + pkgs)
+  bash ("make all" + debs + exes + pkgs)
 
   if (linux) {
     // Store debian packets for later retrieval by the repository manager
@@ -67,17 +90,13 @@ pipeline {
                     agent {label               "xenial && x86_64"}
                     steps {jack_playrec_build_steps("xenial && x86_64")}
                 }
-                stage(                         "trusty && x86_64") {
-                    agent {label               "trusty && x86_64"}
-                    steps {jack_playrec_build_steps("trusty && x86_64")}
+                stage(                         "focal && x86_64") {
+                    agent {label               "focal && x86_64"}
+                    steps {jack_playrec_build_steps("focal && x86_64")}
                 }
                 stage(                         "bionic && armv7") {
                     agent {label               "bionic && armv7"}
                     steps {jack_playrec_build_steps("bionic && armv7")}
-                }
-                stage(                         "xenial && armv7") {
-                    agent {label               "xenial && armv7"}
-                    steps {jack_playrec_build_steps("xenial && armv7")}
                 }
                 stage(                         "windows && x86_64") {
                     agent {label               "windows && x86_64"}
@@ -91,34 +110,22 @@ pipeline {
         }
         stage("publish") {
             agent {label "aptly"}
-            // // do not publish packages for any branches except these
-            // when { anyOf { branch 'master'; branch 'development'; branch 'feature/automatic-build-jobs'} }
             steps {
-            //     checkout([$class: 'GitSCM', branches: [[name: "master"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "ssh://mha.physik.uni-oldenburg.de/openMHA-aptly"]]])
-
                 // Receive all deb packages from jack_playrec build
+                unstash "x86_64_focal"
                 unstash "x86_64_bionic"
                 unstash "x86_64_xenial"
-                unstash "x86_64_trusty"
                 unstash "armv7_bionic"
-                unstash "armv7_xenial"
 
                 archiveArtifacts 'packaging/deb/hoertech/*/*deb'
-                // Copies the new debs to the stash of existing debs,
-                // creates an apt repository, uploads.
-                //sh "make"
 
-                // For now, make the windows installer available in a tar file that we publish
-                // as a Jenkins artifact
+                // Make windows installer available as a Jenkins artifact
                 unstash "x86_64_windows"
-                //sh "tar cvzf windows-installer.tar.gz mha/tools/packaging/exe/*exe"
                 archiveArtifacts 'packaging/exe/*exe'
 
-                // For now, make the macOS installer available in a tar file that we publish
-                // as a Jenkins artifact
+                // Make the macOS installer available as a Jenkins artifact
                 unstash "x86_64_mac"
                 archiveArtifacts 'packaging/pkg/*pkg'
-
             }
         }
     }
@@ -129,7 +136,7 @@ pipeline {
     // https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#-mail-%20mail
     post {
         failure {
-            mail to: 'p.maanen@hoertech.de',
+            mail to: 'p.maanen@hoertech.de,t.herzke@hoertech.de,g.grimm@hoertech.de',
                  subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
                  body: "Something is wrong with ${env.BUILD_URL}"
         }
