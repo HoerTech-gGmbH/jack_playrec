@@ -27,15 +27,19 @@ def windows_bash(command) {
 }
 
 // Encapsulation of the build steps to perform when building jack_playrec
-// @param stage_name the stage name is "system && arch" where system is bionic,
-//                   xenial, windows, or mac, and arch is x86_64, i686,
-//                   or armv7. Both are separated by an && operator and spaces.
-//                   This string is also used as a valid label expression for
-//                   jenkins. The appropriate nodes have the respective labels.
-def jack_playrec_build_steps(stage_name) {
+// @param stage_name the stage name is "system && arch && devenv" where "system"
+//                   describes the target operating system and can have values
+//                   like "bionic", "xenial", "windows", or "mac".   "arch" is
+//                   either "x86_64", "i686", or "armv7".  "devenv" specifies
+//                   the development environment, we use "mhadev" for
+//                   jack_playrec. system, arch and devenv are separated by an
+//                   "&&" operator and spaces.  This string is also used as a
+//                   valid label expression for jenkins.  The appropriate nodes
+//                   have the respective labels.
+def jack_playrec_steps(stage_name) {
   // Extract components from stage_name:
-  def system, arch
-  (system,arch) = stage_name.split(/ *&& */) // regexp for missing/extra spaces
+  def system, arch, devenv
+  (system,arch,devenv) = stage_name.split(/ *&& */) // variable number of spaces
 
   // platform booleans
   def linux = (system != "windows" && system != "mac")
@@ -82,29 +86,29 @@ pipeline {
     stages {
         stage("build") {
             parallel {
-                stage(                         "bionic && x86_64") {
-                    agent {label               "bionic && x86_64"}
-                    steps {jack_playrec_build_steps("bionic && x86_64")}
+                stage(                        "bionic && x86_64 && mhadev") {
+                    agent {label              "bionic && x86_64 && mhadev"}
+                    steps {jack_playrec_steps("bionic && x86_64 && mhadev")}
                 }
-                stage(                         "xenial && x86_64") {
-                    agent {label               "xenial && x86_64"}
-                    steps {jack_playrec_build_steps("xenial && x86_64")}
+                stage(                        "xenial && x86_64 && mhadev") {
+                    agent {label              "xenial && x86_64 && mhadev"}
+                    steps {jack_playrec_steps("xenial && x86_64" && mhadev)}
                 }
-                stage(                         "focal && x86_64") {
-                    agent {label               "focal && x86_64"}
-                    steps {jack_playrec_build_steps("focal && x86_64")}
+                stage(                        "focal && x86_64 && mhadev") {
+                    agent {label              "focal && x86_64 && mhadev"}
+                    steps {jack_playrec_steps("focal && x86_64 && mhadev")}
                 }
-                stage(                         "bionic && armv7") {
-                    agent {label               "bionic && armv7"}
-                    steps {jack_playrec_build_steps("bionic && armv7")}
+                stage(                        "bionic && armv7 && mhadev") {
+                    agent {label              "bionic && armv7 && mhadev"}
+                    steps {jack_playrec_steps("bionic && armv7 && mhadev")}
                 }
-                stage(                         "windows && x86_64") {
-                    agent {label               "windows && x86_64"}
-                    steps {jack_playrec_build_steps("windows && x86_64")}
+                stage(                        "windows && x86_64 && mhadev") {
+                    agent {label              "windows && x86_64 && mhadev"}
+                    steps {jack_playrec_steps("windows && x86_64 && mhadev")}
                 }
-                stage(                         "mac && x86_64") {
-                    agent {label               "mac && x86_64"}
-                    steps {jack_playrec_build_steps("mac && x86_64")}
+                stage(                        "mac && x86_64 && mhadev") {
+                    agent {label              "mac && x86_64 && mhadev"}
+                    steps {jack_playrec_steps("mac && x86_64 && mhadev")}
                 }
             }
         }
