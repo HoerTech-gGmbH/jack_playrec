@@ -1,55 +1,49 @@
-#!/bin/bash
+#!/bin/bash -ex
 # Copy all binaries into the destination folder
 
-function fix_install_names {
-    path=$1
-    file=$2;
-    if [[ $1 == "lib" ]]; then
-        INSTALL_NAME=$(echo @rpath/../lib/`basename $file` | sed -E 's/\.[0-9]+//g');
-        install_name_tool -id $INSTALL_NAME ./lib/`basename $file`;
-        name=`basename $file`
-    else
-        DYLIBS=$(otool -L ./$path/`basename $file` | grep -v "/usr/lib"| grep -v "/System" | sed "/$name/d" | Awk -F' ' '{ print $1 }')
+# remove any leftovers from last run
+rm -rf bin/ lib/
+mkdir -p bin lib/jack_playrec
+
+# copy jack_playrec binaries
+cp -v ../../bin/* bin/.
+chmod 755 bin/*
+
+# adds dependencies (more libs) and corrects shared library references for the
+# installation location /usr/local
+function resolve_and_correct_references_of()
+{
+    local file="$1"
+    # if this is a library, correct its own idea where it is installed
+    if [[ $(dirname "$file") == "lib/jack_playrec" ]]
+    then install_name_tool -id /usr/local/"$file" "$file"
     fi
-    for dylib in $DYLIBS; do
-        LIB_NAME=$(echo @rpath/../lib/`basename $dylib`| sed -E 's/\.[0-9]+//g');
-        install_name_tool -change $dylib $LIB_NAME ./$path/`basename $file`;
-    done;
-}
-function find_lib {
-    file=$1;
-    name=`basename $file`
-    DYLIBS=$(otool -L $file | grep -v "/usr/lib"| grep -v "/System" | sed "/$name/d" | awk -F' ' '{ print $1 }' | xargs -n1)
-    for dylib in $DYLIBS; do
-        dest=lib/$(echo `basename $dylib` | sed -E 's/\.[0-9]+//g');
-        if [ ! -f $dest ]; then
-            cp $dylib lib/$(echo `basename $dylib` | sed -E 's/\.[0-9]+//g');
-        fi;
-    done;
+
+    local dependency
+    otool -L "$file"
+    otool -L "$file" | cut -d" " -f1 | grep -v "/usr/lib"| grep -v "/System" | \
+        grep -v : | grep -v libjack | while read dependency
+    do
+        local installed_dependency="lib/jack_playrec/$(basename "$dependency")"
+
+        # resolve dependency
+        if [ ! -e "$installed_dependency" ]
+        then
+            cp -v "$dependency" "$installed_dependency"
+            chmod 755  "$installed_dependency"
+            resolve_and_correct_references_of "$installed_dependency"
+        fi
+
+        # correct reference of file to dependency
+        install_name_tool -change "$dependency" "/usr/local/$installed_dependency" "$file"
+    done
 }
 
-mkdir -p bin
-mkdir -p lib
-cp ../../bin/* bin/.
-for file in bin/*; do
-    find_lib $file;
-done;
+# for each binary and library
+for file in bin/*
+do
+    resolve_and_correct_references_of "$file"
+done
 
-while [ "$LIBS" != "$(ls lib/)" ]; do
-    LIBS=$(ls lib/)
-    for file in lib/*; do
-        find_lib $file;
-    done;
-done;
-for file in lib/*dylib; do
-    fix_install_names lib $file;
-done;
-for file in bin/*; do
-    fix_install_names bin $file;
-done;
-for file in $(cat expected_dependencies.txt); do
-    if [ ! -f lib/$file ]; then
-       echo "Error: Expected dependency" $file "not found in lib/. ";
-       exit 1;
-    fi
-done;
+# We do not want to redistribute libjack
+rm -f lib/jack_playrec/*libjack*dylib
