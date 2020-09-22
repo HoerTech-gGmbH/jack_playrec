@@ -43,7 +43,7 @@ deb: install
 	$(MAKE) -C packaging/deb
 
 pkg: install
-	$(MAKE) -C packaging/pkg
+	$(MAKE) -C packaging/pkg all
 
 install: all
 	@mkdir -p  $(DESTDIR)$(PREFIX)/bin
