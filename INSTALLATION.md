@@ -28,5 +28,5 @@ An jack_playrec installer for jack_playrec can be downloaded from our
 Github releases page, https://github.com/HoerTech-gGmbH/jack_playrec/releases
 
 The m-files for interacting with the executables from Matlab or Octave are 
-installed in `/usr/local/lib/jack_playrec/`, and documentation can be
+installed in `/usr/local/lib/jack_playrec/mfiles/`, and documentation can be
 found in `/usr/local/doc/jack_playrec/`.
