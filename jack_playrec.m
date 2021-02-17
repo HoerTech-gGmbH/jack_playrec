@@ -1,5 +1,5 @@
 % This file is part of jack_playrec
-% Copyright (C) 2018  Hörtech gGmbH
+% Copyright (C) 2018 2019 2020 2021 Hörtech gGmbH
 % Copyright (C) 2013 2014 2015 2016 2017 Giso Grimm
 %
 %  This program is free software: you can redistribute it and/or modify
@@ -60,6 +60,8 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
     varargin{end+1} = 'help';
     x = [];
   end
+  % Setup path if necessary
+  set_environment;
   sCfg = struct;
   sHelp = struct;
   sCfg.input = {};
