@@ -37,7 +37,7 @@ function set_environment()
     setenv('PATH',[getenv('PATH') delim bin])
   end
   if(check_playrec()~=0)
-    error('jack_playrec was found in PATH and/or default installation directory!'...
+    error('jack_playrec was not found in PATH and/or default installation directory!'...
             ' Please add the location of jack_playrec to the PATH!');
 end
 
