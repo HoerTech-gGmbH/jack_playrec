@@ -11,8 +11,8 @@
 %  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
 
-function set_environment()
-% set_environment()
+function set_jack_playrec_path()
+% set_jack_playrec_path()
 % Checks if jack_playrec can be found in the PATH
 % And amends the PATH with the operating system's
 % default jack_playrec installation directory

@@ -61,7 +61,7 @@ function [y,fs,bufsize,load,xruns,sCfg] = jack_playrec( x, varargin )
     x = [];
   end
   % Setup path if necessary
-  set_environment;
+  set_jack_playrec_path;
   sCfg = struct;
   sHelp = struct;
   sCfg.input = {};
